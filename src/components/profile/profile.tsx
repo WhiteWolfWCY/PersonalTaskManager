@@ -2,7 +2,11 @@ import React, {FC, ReactElement} from 'react';
 import {Avatar, Box, Typography} from '@mui/material'
 import PropTypes from 'prop-types';
 
-export const Profile: FC = (props:any): ReactElement => {
+interface IProfile {
+    name?: string;
+}
+
+export const Profile: FC<IProfile> = (props): ReactElement => {
     const { name = 'John'} = props;
     return(
         <Box
