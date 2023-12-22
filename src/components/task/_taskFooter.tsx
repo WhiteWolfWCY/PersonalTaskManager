@@ -8,6 +8,8 @@ export const TaskFooter: FC<ITaskFooter> = (
 ): ReactElement => {
 
     const {
+        id,
+        status,
         onStatusChange = (e) => console.log(e), 
         onClick = (e) => console.log(e),
     } = props;
@@ -43,4 +45,6 @@ export const TaskFooter: FC<ITaskFooter> = (
 TaskFooter.propTypes = {
     onStatusChange: PropTypes.func,
     onClick: PropTypes.func,
+    id: PropTypes.string.isRequired,
+    status: PropTypes.string,
 };
