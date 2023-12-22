@@ -1,4 +1,4 @@
-import React, {FC, ReactElement, useState } from 'react';
+import React, {FC, ReactElement, useState, useEffect } from 'react';
 import {Box, Typography, Stack, LinearProgress, Button, Alert, AlertTitle} from '@mui/material';
 import { TaskTitleField } from './_taskTitleField';
 import { TaskDescriptionField } from './_taskDescriptionField';
@@ -32,6 +32,10 @@ export const CreateTaskForm: FC = (): ReactElement => {
         Priority.normal
     );
 
+    const [showSuccess, setShowSuccess] = useState<boolean>(
+        false
+    );
+
     const createTaskMutation = useMutation((data: ICreateTask)=>
         sendApiRequest(
             'http://localhost:3200/tasks',
@@ -56,6 +60,21 @@ export const CreateTaskForm: FC = (): ReactElement => {
         createTaskMutation.mutate(task);
     }
 
+    useEffect(() => {
+        if(createTaskMutation.isSuccess){
+            setShowSuccess(true);
+        }
+
+        const successTimeout = setTimeout(() => {
+            setShowSuccess(false);
+        }, 7000);
+
+        return () => {
+            clearTimeout(successTimeout);
+        }
+
+    }, [createTaskMutation.isSuccess]);
+
     return(
         <Box
             display="flex"
@@ -65,35 +84,42 @@ export const CreateTaskForm: FC = (): ReactElement => {
             px={4}
             my={6}
         >
-            <Alert
-                severity='success'
-                sx={{
-                     width: '100%',
-                     marginBottom: '16px'
-                }}
-            >
-                <AlertTitle>
-                    Success
-                </AlertTitle>
-                The task has been created succesfully
-            </Alert>
+            {showSuccess &&
+                <Alert
+                    severity='success'
+                    sx={{
+                        width: '100%',
+                        marginBottom: '16px'
+                    }}
+                >
+                    <AlertTitle>
+                        Success
+                    </AlertTitle>
+                    The task has been created succesfully
+                </Alert>
+            }
+            
 
             <Typography mb={2} component="h2" variant="h6">
                 Create A Task
             </Typography>
             <Stack sx={{width: '100%'}} spacing={2}>
                 <TaskTitleField 
+                    disabled={createTaskMutation.isLoading}
                     onChange={(e) => setTitle(e.target.value)}
                 />
                 <TaskDescriptionField 
+                    disabled={createTaskMutation.isLoading}
                     onChange={(e) => setDescription(e.target.value)}
                 />
                 <TaskDateField
+                    disabled={createTaskMutation.isLoading}
                     value={date}
                     onChange={(date)=>setDate(date)}
                 />
                 <Stack sx={{width: '100%'}} direction="row" spacing={2}>
                     <TaskSelectField 
+                        disabled={createTaskMutation.isLoading}
                         label="Status" 
                         name="Status" 
                         value={status}
@@ -113,6 +139,7 @@ export const CreateTaskForm: FC = (): ReactElement => {
                         label="Priority"
                         name="Priority"
                         value={priority}
+                        disabled={createTaskMutation.isLoading}
                         onChange={(e)=>setPriority(e.target.value as string)}
                         items={[
                             {
@@ -130,8 +157,15 @@ export const CreateTaskForm: FC = (): ReactElement => {
                         ]}
                     />
                 </Stack>
-                <LinearProgress />
+                {createTaskMutation.isLoading && <LinearProgress />}
                 <Button
+                    disabled={
+                        !title ||
+                        !description ||
+                        !date ||
+                        !status ||
+                        !priority
+                    }
                     variant='contained'
                     size='large'
                     fullWidth
