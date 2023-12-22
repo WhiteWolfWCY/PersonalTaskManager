@@ -6,6 +6,9 @@ import { TaskDateField } from './_taskDateField';
 import { TaskSelectField } from './_taskSelectField';
 import { Status } from './enums/Status';
 import { Priority } from './enums/Priority';
+import { useMutation } from 'react-query';
+import { sendApiRequest } from '../../helpers/sendApiRequest';
+import { ICreateTask } from '../taskArea/interfaces/ICreateTask';
 
 export const CreateTaskForm: FC = (): ReactElement => {
 
@@ -27,6 +30,14 @@ export const CreateTaskForm: FC = (): ReactElement => {
 
     const [priority, setPriority] = useState<string>(
         Priority.normal
+    );
+
+    const createTaskMutation = useMutation((data: ICreateTask)=>
+        sendApiRequest(
+            'http://localhost:3200/tasks',
+            'POST',
+            data
+        )
     );
 
     return(
