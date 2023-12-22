@@ -3,9 +3,11 @@ import { Grid, Box, Alert, LinearProgress } from '@mui/material';
 import { format } from 'date-fns';
 import { TaskCounter } from '../taskCounter/taskCounter';
 import { Task } from '../task/task';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 import { sendApiRequest } from '../../helpers/sendApiRequest';
 import { ITaskApi } from './interfaces/ITaskApi';
+import { Status } from '../createTaskForm/enums/Status';
+import { IUpdateTask } from '../createTaskForm/interfaces/IUpdateTask';
 
 export const TaskArea: FC = (): ReactElement => {
 
@@ -18,6 +20,24 @@ export const TaskArea: FC = (): ReactElement => {
             );
         }
     );
+
+    const updateTaskMutation = useMutation(
+        (data: IUpdateTask) => sendApiRequest(
+            'http://localhost:3200/tasks',
+            'PUT',
+            data,
+        ),
+    );
+
+    function onStatusChangeHandler(
+        e: React.ChangeEvent<HTMLInputElement>,
+        id: string,
+    ){
+        updateTaskMutation.mutate({
+            id,
+            status: e.target.checked ? Status.inProgress : Status.todo
+        });
+    }
 
     return(
         <Grid item md={8} px={4}>
@@ -73,7 +93,9 @@ export const TaskArea: FC = (): ReactElement => {
                         Array.isArray(data) &&
                         data.length > 0 &&
                         data.map((each, index)=>{
-                            return(
+                            return each.status === Status.todo || 
+                            each.status === Status.inProgress 
+                            ? (
                                 <Task
                                     key = {index + each.priority} 
                                     id={each.id}
@@ -82,8 +104,9 @@ export const TaskArea: FC = (): ReactElement => {
                                     description={each.description}
                                     priority={each.priority}
                                     status={each.status}
+                                    onStatusChange={onStatusChangeHandler}
                                 />
-                            );
+                            ): (false);
                         })
                     )}
                     </>
