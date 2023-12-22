@@ -7,7 +7,6 @@ import { TaskSelectField } from './_taskSelectField';
 import { Status } from './enums/Status';
 import { Priority } from './enums/Priority';
 
-
 export const CreateTaskForm: FC = (): ReactElement => {
 
     const [title, setTitle] = useState<string | undefined>(
@@ -39,6 +38,19 @@ export const CreateTaskForm: FC = (): ReactElement => {
             px={4}
             my={6}
         >
+            <Alert
+                severity='success'
+                sx={{
+                     width: '100%',
+                     marginBottom: '16px'
+                }}
+            >
+                <AlertTitle>
+                    Success
+                </AlertTitle>
+                The task has been created succesfully
+            </Alert>
+
             <Typography mb={2} component="h2" variant="h6">
                 Create A Task
             </Typography>
@@ -91,6 +103,14 @@ export const CreateTaskForm: FC = (): ReactElement => {
                         ]}
                     />
                 </Stack>
+                <LinearProgress />
+                <Button
+                    variant='contained'
+                    size='large'
+                    fullWidth
+                >
+                    Create A Task
+                </Button>
             </Stack>
         </Box>
     )
