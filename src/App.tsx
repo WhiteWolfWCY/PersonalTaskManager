@@ -17,7 +17,6 @@ const App:FC = (): ReactElement => {
           <CssBaseline />
           <Dashboard />
         </ThemeProvider> 
-        <ReactQueryDevtools initialIsOpen={false} />
       </ComposeContext>
     </QueryClientProvider>
   );
