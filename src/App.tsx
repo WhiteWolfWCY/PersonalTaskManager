@@ -4,17 +4,21 @@ import { customTheme } from './theme/customTheme';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { rootContext } from './context/root.context';
+import ComposeContext from './context/Compose.context';
 
 const queryClient = new QueryClient();
 
 const App:FC = (): ReactElement => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={customTheme}>
-        <CssBaseline />
-        <Dashboard />
-      </ThemeProvider> 
-      <ReactQueryDevtools initialIsOpen={false} />
+      <ComposeContext components={rootContext}>
+        <ThemeProvider theme={customTheme}>
+          <CssBaseline />
+          <Dashboard />
+        </ThemeProvider> 
+        <ReactQueryDevtools initialIsOpen={false} />
+      </ComposeContext>
     </QueryClientProvider>
   );
 };
